@@ -11,10 +11,7 @@ import java.io.FileNotFoundException;
 
 /**
  * Check whether <head> tag is present in the EAD
- *
  */
-
-
 public class LookForHeadTag {
 
     public static boolean hasHeadTag(String eadfile) throws FileNotFoundException, XMLStreamException, FactoryConfigurationError {
@@ -38,5 +35,4 @@ public class LookForHeadTag {
 
         return result;
     }
-
 }

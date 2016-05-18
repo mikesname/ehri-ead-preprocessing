@@ -24,7 +24,7 @@ public class AddLanguage {
     static boolean languageAdded = false;
     static boolean revisionChangeAdded = false;
 
-    public static String addLanguage(String eadfile, String language, String langCode)
+    public static void addLanguage(String eadfile, String language, String langCode)
             throws XMLStreamException, FactoryConfigurationError, IOException {
 
         String outputfile = eadfile.replace(".xml", SUFFIX + ".xml");
@@ -100,7 +100,6 @@ public class AddLanguage {
             }
         }
         writer.close();
-        return null;
     }
 
     private static void addLanguageXml(XMLEventFactory eventFactory, XMLEventWriter writer, String language, String langCode, XMLEvent end) throws XMLStreamException {

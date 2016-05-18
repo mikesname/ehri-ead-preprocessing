@@ -40,17 +40,15 @@ public class UseUNITID_Tag {
      * @param eadfile              the name of the ead file
      * @param unitidAttribute      the attribute that denotes the unitid that should be used
      * @param unitidAttributeValue the value of the attribute that signifies this unitid should be used
-     * @return
      * @throws XMLStreamException
      * @throws FactoryConfigurationError
      * @throws IOException
      */
-    public static String use_unitid_tag(String eadfile, String unitidAttribute, String unitidAttributeValue, Writer outputWriter)
+    public static void use_unitid_tag(String eadfile, String unitidAttribute, String unitidAttributeValue, Writer outputWriter)
             throws XMLStreamException, FactoryConfigurationError, IOException {
 
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = new Date();
-
 
         FileInputStream fileInputStreamEAD = new FileInputStream(eadfile);
         XMLOutputFactory factory = XMLOutputFactory.newInstance();
@@ -169,7 +167,6 @@ public class UseUNITID_Tag {
 
         writer.close();
         xmlEventReaderEAD.close();
-        return null;
     }
 
     private static void resetMainIdValues() {

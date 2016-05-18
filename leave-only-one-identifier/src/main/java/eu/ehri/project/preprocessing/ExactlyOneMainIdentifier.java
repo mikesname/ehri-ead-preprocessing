@@ -51,12 +51,11 @@ public class ExactlyOneMainIdentifier {
      * postcondition: the resulting file will have exactly one ehri_main_identifier
      *
      * @param eadfile the name of the ead file
-     * @return
      * @throws XMLStreamException
      * @throws FactoryConfigurationError
      * @throws IOException
      */
-    public static String leaveOneMainIdentifier(String eadfile, Writer outputWriter)
+    public static void leaveOneMainIdentifier(String eadfile, Writer outputWriter)
             throws XMLStreamException, FactoryConfigurationError, IOException {
 
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -199,7 +198,6 @@ public class ExactlyOneMainIdentifier {
 
         writer.close();
         xmlEventReaderEAD.close();
-        return null;
     }
 
     private static void resetMainIdValues() throws XMLStreamException {

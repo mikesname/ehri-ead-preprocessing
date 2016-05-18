@@ -89,8 +89,7 @@ public class AddUnitIds {
 
             if (event.isEndElement()) {
                 if (event.asEndElement().getName().getLocalPart()
-                        .equals("head")
-                        && top == true) {
+                        .equals("head") && top) {
                     writer.add(end);
                     writer.add(eventFactory.createStartElement("", null,
                             "unitid"));
@@ -105,8 +104,7 @@ public class AddUnitIds {
 
             if (event.isStartElement()) {
                 if (event.asStartElement().getName().getLocalPart()
-                        .equals("did")
-                        && top == true && hashead == false) {
+                        .equals("did") && top && !hashead) {
                     writer.add(end);
                     writer.add(eventFactory.createStartElement("", null,
                             "unitid"));
@@ -121,8 +119,7 @@ public class AddUnitIds {
 
             if (event.isStartElement()) {
                 if (event.asStartElement().getName().getLocalPart()
-                        .equals("did")
-                        && top == false) {
+                        .equals("did") && !top) {
                     // && head == false) {
                     writer.add(end);
                     writer.add(eventFactory.createStartElement("", null,
@@ -140,6 +137,5 @@ public class AddUnitIds {
 
         writer.close();
         xmlEventReaderEAD.close();
-
     }
 }

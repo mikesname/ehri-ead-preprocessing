@@ -31,8 +31,7 @@ public class DetectIdentifier {
         while (xmlEventReaderEAD.hasNext()) {
             XMLEvent event = xmlEventReaderEAD.nextEvent();
             if (event.isStartElement()) {
-                if (event.asStartElement().getName().getLocalPart()
-                        .equals("did")) {
+                if (event.asStartElement().getName().getLocalPart().equals("did")) {
 
                     @SuppressWarnings("unchecked")
                     Iterator<Attribute> attributes = event.asStartElement()
@@ -45,7 +44,6 @@ public class DetectIdentifier {
                     }
 
                 } else {
-
                     if (event.asStartElement().getName().getLocalPart()
                             .equals("unitid")) {
                         identifier = FindMainIdentifier.UNITID;

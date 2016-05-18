@@ -18,7 +18,6 @@ import java.util.Date;
 
 /**
  * Add a path to each node of an EAD tree
- *
  */
 public class AddPaths {
 
@@ -89,9 +88,7 @@ public class AddPaths {
                         writer.add(eventFactory.createEndElement("", null, "revisiondesc"));
                     }
                 }
-
             }
-
 
             if (event.isStartElement()) {
                 if (event.asStartElement().getName().getLocalPart().equals("archdesc")) {
@@ -182,7 +179,7 @@ public class AddPaths {
             }
 
             if (event.isEndElement()) {
-                if (event.asEndElement().getName().getLocalPart().equals("head") && toplevel == true) {
+                if (event.asEndElement().getName().getLocalPart().equals("head") && toplevel) {
                     writer.add(end);
                     writer.add(eventFactory.createStartElement("", null, "unitid"));
                     writer.add(eventFactory.createAttribute("label", "ehri_structure"));
@@ -193,7 +190,7 @@ public class AddPaths {
 
             if (event.isStartElement()) {
                 if (event.asStartElement().getName().getLocalPart().equals("did")
-                        && toplevel == true && hashead == false) {
+                        && toplevel && !hashead) {
                     writer.add(end);
                     writer.add(eventFactory.createStartElement("", null, "unitid"));
                     writer.add(eventFactory.createAttribute("label", "ehri_structure"));
@@ -204,7 +201,7 @@ public class AddPaths {
 
             if (event.isStartElement()) {
                 if (event.asStartElement().getName().getLocalPart().equals("did")
-                        && toplevel == false) {
+                        && !toplevel) {
 
                     writer.add(end);
                     writer.add(eventFactory.createStartElement("", null, "unitid"));
@@ -344,7 +341,5 @@ public class AddPaths {
         writer.add(end);
         writer.add(eventFactory.createEndElement("", null, "change"));
         writer.add(end);
-
     }
-
 }

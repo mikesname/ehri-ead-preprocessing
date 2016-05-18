@@ -23,11 +23,10 @@ public class UseDID_ID_Label {
      * extract identifiers used by institutionen like City
      * Archives Amsterdam, where identifier is given as attribute
      * in the <did> node(<did id="xxxx">
-     *
-         */
+     */
 
     // for instance archives amsterdam
-    public static String use_did_label(String eadfile)
+    public static void use_did_label(String eadfile)
             throws XMLStreamException, FactoryConfigurationError, IOException {
 
         String outputfile = eadfile.replace(".xml", "_mainids.xml");
@@ -82,8 +81,7 @@ public class UseDID_ID_Label {
             }
 
             if (event.isStartElement()) {
-                if (event.asStartElement().getName().getLocalPart()
-                        .equals("did")) {
+                if (event.asStartElement().getName().getLocalPart().equals("did")) {
                     @SuppressWarnings("unchecked")
                     Iterator<Attribute> attributes = event.asStartElement()
                             .getAttributes();
@@ -112,9 +110,8 @@ public class UseDID_ID_Label {
 
 
             if (event.isEndElement()) {
-                if (event.asEndElement().getName().getLocalPart()
-                        .equals("head")) {
-                    if (top == true) {
+                if (event.asEndElement().getName().getLocalPart().equals("head")) {
+                    if (top) {
                         event = xmlEventReaderEAD.nextEvent();
                         writer.add(end);
                         writer.add(eventFactory.createStartElement("", null,
@@ -129,28 +126,25 @@ public class UseDID_ID_Label {
                 }
             }
 
-            if (event.isStartElement()) {
-                if (event.asStartElement().getName().getLocalPart()
-                        .equals("did")) {
-                    if (top == false) {
-                        event = xmlEventReaderEAD.nextEvent();
-                        writer.add(end);
-                        writer.add(eventFactory.createStartElement("", null,
-                                "unitid"));
-                        writer.add(eventFactory.createAttribute("label",
-                                "ehri_main_identifier"));
-                        writer.add(eventFactory.createCharacters(value));
-                        writer.add(eventFactory.createEndElement("", null,
-                                "unitid"));
-                        writer.add(end);
-                    }
+            if (event.asStartElement().getName().getLocalPart().equals("did")) {
+                if (!top) {
+                    xmlEventReaderEAD.nextEvent();
+                    writer.add(end);
+                    writer.add(eventFactory.createStartElement("", null,
+                            "unitid"));
+                    writer.add(eventFactory.createAttribute("label",
+                            "ehri_main_identifier"));
+                    writer.add(eventFactory.createCharacters(value));
+                    writer.add(eventFactory.createEndElement("", null,
+                            "unitid"));
+                    writer.add(end);
                 }
+            }
+            if (event.isStartElement()) {
             }
 
         }
         writer.close();
-        return null;
-
     }
 
 }

@@ -58,6 +58,5 @@ public class FindMainIdentifier {
         } else if (identifier.equals(UNITID)) {
             UseUNITID_Tag.use_unitid_tag(eadfile, attrName, attrValue, new FileWriter(outputfile));
         }
-
     }
 }

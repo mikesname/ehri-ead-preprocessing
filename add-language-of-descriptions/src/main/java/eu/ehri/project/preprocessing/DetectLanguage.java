@@ -61,6 +61,5 @@ public class DetectLanguage {
 
         }
         return languageAlreadyAvailable;
-
     }
 }
