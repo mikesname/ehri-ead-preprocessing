@@ -13,9 +13,7 @@ import java.util.Iterator;
 /**
  * Set of rules to detect the main node identifier used
  * by the repository
- *
  */
-
 public class DetectIdentifier {
 
     static String identifier = "";

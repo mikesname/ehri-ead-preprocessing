@@ -29,90 +29,107 @@ public class UseDID_ID_Label {
     public static void use_did_label(String eadfile)
             throws XMLStreamException, FactoryConfigurationError, IOException {
 
-        String outputfile = eadfile.replace(".xml", "_mainids.xml");
+        String outputPath = eadfile.replace(".xml", "_mainids.xml");
 
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         Date date = new Date();
 
-        FileInputStream fileInputStreamEAD = new FileInputStream(eadfile);
         XMLOutputFactory factory = XMLOutputFactory.newInstance();
-        XMLEventWriter writer = factory.createXMLEventWriter(new FileWriter(
-                outputfile));
         XMLEventFactory eventFactory = XMLEventFactory.newInstance();
-        XMLEventReader xmlEventReaderEAD = XMLInputFactory.newInstance()
-                .createXMLEventReader(fileInputStreamEAD);
 
-        XMLEvent end = eventFactory.createDTD("\n");
+        try (FileInputStream fileInputStreamEAD = new FileInputStream(eadfile);
+             FileWriter fileWriter = new FileWriter(outputPath)) {
 
-        String value = "";
+            XMLEventWriter writer = factory.createXMLEventWriter(fileWriter);
+            XMLEventReader reader = XMLInputFactory.newInstance()
+                    .createXMLEventReader(fileInputStreamEAD);
 
-        boolean top = false;
+            XMLEvent end = eventFactory.createDTD("\n");
 
-        while (xmlEventReaderEAD.hasNext()) {
-            XMLEvent event = xmlEventReaderEAD.nextEvent();
+            String value = null;
 
-            writer.add(event);
+            boolean top = false;
 
-            if (event.isStartElement()) {
-                if (event.asStartElement().getName().getLocalPart()
-                        .equals("revisiondesc")) {
-                    writer.add(end);
-                    writer.add(eventFactory.createStartElement("", null,
-                            "change"));
-                    writer.add(end);
-                    writer.add(eventFactory.createStartElement("", null,
-                            "date"));
-                    writer.add(eventFactory.createCharacters(dateFormat.format(date)));
-                    writer.add(eventFactory.createEndElement("", null,
-                            "date"));
-                    writer.add(end);
-                    writer.add(eventFactory.createStartElement("", null,
-                            "item"));
-                    writer.add(eventFactory
-                            .createCharacters("EHRI added a unitid with label \"ehri_main_identifier\" to indicate the"
-                                    + " identifier provided by the institution that EHRI will use as the identifier of"
-                                    + " the unit."));
-                    writer.add(eventFactory.createEndElement("", null,
-                            "item"));
-                    writer.add(end);
-                    writer.add(eventFactory.createEndElement("", null,
-                            "change"));
+            while (reader.hasNext()) {
+                XMLEvent event = reader.nextEvent();
+
+                writer.add(event);
+
+                if (event.isStartElement()) {
+                    if (event.asStartElement().getName().getLocalPart()
+                            .equals("revisiondesc")) {
+                        writer.add(end);
+                        writer.add(eventFactory.createStartElement("", null,
+                                "change"));
+                        writer.add(end);
+                        writer.add(eventFactory.createStartElement("", null,
+                                "date"));
+                        writer.add(eventFactory.createCharacters(dateFormat.format(date)));
+                        writer.add(eventFactory.createEndElement("", null,
+                                "date"));
+                        writer.add(end);
+                        writer.add(eventFactory.createStartElement("", null,
+                                "item"));
+                        writer.add(eventFactory
+                                .createCharacters("EHRI added a unitid with label \"ehri_main_identifier\" to indicate the"
+                                        + " identifier provided by the institution that EHRI will use as the identifier of"
+                                        + " the unit."));
+                        writer.add(eventFactory.createEndElement("", null,
+                                "item"));
+                        writer.add(end);
+                        writer.add(eventFactory.createEndElement("", null,
+                                "change"));
+                    }
                 }
-            }
 
-            if (event.isStartElement()) {
-                if (event.asStartElement().getName().getLocalPart().equals("did")) {
-                    @SuppressWarnings("unchecked")
-                    Iterator<Attribute> attributes = event.asStartElement()
-                            .getAttributes();
-                    while (attributes.hasNext()) {
-                        Attribute attribute = attributes.next();
-                        if (attribute.getName().toString().equals("id")) {
-                            value = attribute.getValue();
+                if (event.isStartElement()) {
+                    if (event.asStartElement().getName().getLocalPart().equals("did")) {
+                        @SuppressWarnings("unchecked")
+                        Iterator<Attribute> attributes = event.asStartElement()
+                                .getAttributes();
+                        while (attributes.hasNext()) {
+                            Attribute attribute = attributes.next();
+                            if (attribute.getName().toString().equals("id")) {
+                                value = attribute.getValue();
+                            }
+                        }
+
+                    }
+                }
+
+                if (event.isStartElement()) {
+                    if (event.asStartElement().getName().getLocalPart()
+                            .equals("archdesc")) {
+                        top = true;
+                    }
+                }
+
+                if (event.isEndElement()) {
+                    if (event.asEndElement().getName().getLocalPart().equals("did")) {
+                        top = false;
+                    }
+                }
+
+                if (event.isEndElement()) {
+                    if (event.asEndElement().getName().getLocalPart().equals("head")) {
+                        if (top) {
+                            event = reader.nextEvent();
+                            writer.add(end);
+                            writer.add(eventFactory.createStartElement("", null,
+                                    "unitid"));
+                            writer.add(eventFactory.createAttribute("label",
+                                    "ehri_main_identifier"));
+                            writer.add(eventFactory.createCharacters(value));
+                            writer.add(eventFactory.createEndElement("", null,
+                                    "unitid"));
+                            writer.add(end);
                         }
                     }
-
                 }
-            }
 
-            if (event.isStartElement()) {
-                if (event.asStartElement().getName().getLocalPart()
-                        .equals("archdesc")) {
-                    top = true;
-                }
-            }
-
-            if (event.isEndElement()) {
-                if (event.asEndElement().getName().getLocalPart().equals("did")) {
-                    top = false;
-                }
-            }
-
-
-            if (event.isEndElement()) {
-                if (event.asEndElement().getName().getLocalPart().equals("head")) {
-                    if (top) {
-                        event = xmlEventReaderEAD.nextEvent();
+                if (event.asStartElement().getName().getLocalPart().equals("did")) {
+                    if (!top) {
+                        reader.nextEvent();
                         writer.add(end);
                         writer.add(eventFactory.createStartElement("", null,
                                 "unitid"));
@@ -125,26 +142,8 @@ public class UseDID_ID_Label {
                     }
                 }
             }
-
-            if (event.asStartElement().getName().getLocalPart().equals("did")) {
-                if (!top) {
-                    xmlEventReaderEAD.nextEvent();
-                    writer.add(end);
-                    writer.add(eventFactory.createStartElement("", null,
-                            "unitid"));
-                    writer.add(eventFactory.createAttribute("label",
-                            "ehri_main_identifier"));
-                    writer.add(eventFactory.createCharacters(value));
-                    writer.add(eventFactory.createEndElement("", null,
-                            "unitid"));
-                    writer.add(end);
-                }
-            }
-            if (event.isStartElement()) {
-            }
-
+            writer.close();
+            reader.close();
         }
-        writer.close();
     }
-
 }
