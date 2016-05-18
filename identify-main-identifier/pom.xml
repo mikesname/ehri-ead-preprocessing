@@ -44,7 +44,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>eu.ehri.identify_main_identifier.App</mainClass>
+							<mainClass>eu.ehri.project.preprocessing.FindMainIdentifier</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>

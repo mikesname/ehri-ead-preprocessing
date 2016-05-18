@@ -44,7 +44,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>eu.ehri.add_paths_to_ead_nodes.App</mainClass>
+							<mainClass>eu.ehri.project.preprocessing.AddPaths</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>

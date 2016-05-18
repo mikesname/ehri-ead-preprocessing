@@ -48,7 +48,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>eu.ehri.leave_only_one_identifier.ExactlyOneMainIdentifier</mainClass>
+							<mainClass>eu.ehri.project.preprocessing.ExactlyOneMainIdentifier</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>

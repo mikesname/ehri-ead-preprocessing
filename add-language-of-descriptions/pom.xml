@@ -60,7 +60,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>eu.ehri.language.App</mainClass>
+							<mainClass>eu.ehri.project.preprocessing.AddLanguageOfDescription</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>
