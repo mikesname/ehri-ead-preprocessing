@@ -8,22 +8,33 @@
     <version>1.0</version>
     <name>EHRI Project Preprocessing</name>
 
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
     <modules>
         <module>add-ehri-ids</module>
         <module>add-path-structure</module>
         <module>add-language-of-descriptions</module>
         <module>identify-main-identifier</module>
         <module>leave-only-one-identifier</module>
-  </modules>
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>4.10</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
+        <module>common</module>
+    </modules>
+
+    <dependencies>
+        <dependency>
+            <groupId>ehri-project</groupId>
+            <artifactId>ead-preprocessing-common</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.11</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
     <build>
         <plugins>

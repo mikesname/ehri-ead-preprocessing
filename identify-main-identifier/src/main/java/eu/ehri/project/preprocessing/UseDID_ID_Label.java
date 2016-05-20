@@ -17,6 +17,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 
+import static eu.ehri.project.preprocessing.Helpers.isEndElement;
+import static eu.ehri.project.preprocessing.Helpers.isStartElement;
+
 public class UseDID_ID_Label {
 
     /**
@@ -55,45 +58,39 @@ public class UseDID_ID_Label {
 
                 writer.add(event);
 
-                if (event.isStartElement()) {
-                    if (event.asStartElement().getName().getLocalPart()
-                            .equals("revisiondesc")) {
-                        writer.add(end);
-                        writer.add(eventFactory.createStartElement("", null,
-                                "change"));
-                        writer.add(end);
-                        writer.add(eventFactory.createStartElement("", null,
-                                "date"));
-                        writer.add(eventFactory.createCharacters(dateFormat.format(date)));
-                        writer.add(eventFactory.createEndElement("", null,
-                                "date"));
-                        writer.add(end);
-                        writer.add(eventFactory.createStartElement("", null,
-                                "item"));
-                        writer.add(eventFactory
-                                .createCharacters("EHRI added a unitid with label \"ehri_main_identifier\" to indicate the"
-                                        + " identifier provided by the institution that EHRI will use as the identifier of"
-                                        + " the unit."));
-                        writer.add(eventFactory.createEndElement("", null,
-                                "item"));
-                        writer.add(end);
-                        writer.add(eventFactory.createEndElement("", null,
-                                "change"));
-                    }
+                if (isStartElement(event, "revisiondesc")) {
+                    writer.add(end);
+                    writer.add(eventFactory.createStartElement("", null,
+                            "change"));
+                    writer.add(end);
+                    writer.add(eventFactory.createStartElement("", null,
+                            "date"));
+                    writer.add(eventFactory.createCharacters(dateFormat.format(date)));
+                    writer.add(eventFactory.createEndElement("", null,
+                            "date"));
+                    writer.add(end);
+                    writer.add(eventFactory.createStartElement("", null,
+                            "item"));
+                    writer.add(eventFactory
+                            .createCharacters("EHRI added a unitid with label \"ehri_main_identifier\" to indicate the"
+                                    + " identifier provided by the institution that EHRI will use as the identifier of"
+                                    + " the unit."));
+                    writer.add(eventFactory.createEndElement("", null,
+                            "item"));
+                    writer.add(end);
+                    writer.add(eventFactory.createEndElement("", null,
+                            "change"));
                 }
 
-                if (event.isStartElement()) {
-                    if (event.asStartElement().getName().getLocalPart().equals("did")) {
-                        @SuppressWarnings("unchecked")
-                        Iterator<Attribute> attributes = event.asStartElement()
-                                .getAttributes();
-                        while (attributes.hasNext()) {
-                            Attribute attribute = attributes.next();
-                            if (attribute.getName().toString().equals("id")) {
-                                value = attribute.getValue();
-                            }
+                if (isStartElement(event, "did")) {
+                    @SuppressWarnings("unchecked")
+                    Iterator<Attribute> attributes = event.asStartElement()
+                            .getAttributes();
+                    while (attributes.hasNext()) {
+                        Attribute attribute = attributes.next();
+                        if (attribute.getName().toString().equals("id")) {
+                            value = attribute.getValue();
                         }
-
                     }
                 }
 
@@ -104,32 +101,13 @@ public class UseDID_ID_Label {
                     }
                 }
 
-                if (event.isEndElement()) {
-                    if (event.asEndElement().getName().getLocalPart().equals("did")) {
-                        top = false;
-                    }
+                if (isEndElement(event, "did")) {
+                    top = false;
                 }
 
-                if (event.isEndElement()) {
-                    if (event.asEndElement().getName().getLocalPart().equals("head")) {
-                        if (top) {
-                            event = reader.nextEvent();
-                            writer.add(end);
-                            writer.add(eventFactory.createStartElement("", null,
-                                    "unitid"));
-                            writer.add(eventFactory.createAttribute("label",
-                                    "ehri_main_identifier"));
-                            writer.add(eventFactory.createCharacters(value));
-                            writer.add(eventFactory.createEndElement("", null,
-                                    "unitid"));
-                            writer.add(end);
-                        }
-                    }
-                }
-
-                if (event.asStartElement().getName().getLocalPart().equals("did")) {
-                    if (!top) {
-                        reader.nextEvent();
+                if (isEndElement(event, "head")) {
+                    if (top) {
+                        event = reader.nextEvent();
                         writer.add(end);
                         writer.add(eventFactory.createStartElement("", null,
                                 "unitid"));
@@ -140,6 +118,19 @@ public class UseDID_ID_Label {
                                 "unitid"));
                         writer.add(end);
                     }
+                }
+
+                if (isStartElement(event, "did") && !top) {
+                    reader.nextEvent();
+                    writer.add(end);
+                    writer.add(eventFactory.createStartElement("", null,
+                            "unitid"));
+                    writer.add(eventFactory.createAttribute("label",
+                            "ehri_main_identifier"));
+                    writer.add(eventFactory.createCharacters(value));
+                    writer.add(eventFactory.createEndElement("", null,
+                            "unitid"));
+                    writer.add(end);
                 }
             }
             writer.close();

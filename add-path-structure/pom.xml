@@ -6,39 +6,10 @@
         <artifactId>ead-preprocessing</artifactId>
         <version>1.0</version>
     </parent>
-    <version>0.0.1-SNAPSHOT</version>
     <artifactId>add_paths_to_ead_nodes</artifactId>
     <packaging>jar</packaging>
 
     <name>add_paths_to_ead_nodes</name>
-    <url>http://maven.apache.org</url>
-
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
-
-    <dependencies>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.10</version>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- STAX parser -->
-        <dependency>
-            <groupId>stax</groupId>
-            <artifactId>stax</artifactId>
-            <version>1.2.0</version>
-        </dependency>
-        <dependency>
-            <groupId>stax</groupId>
-            <artifactId>stax-api</artifactId>
-            <version>1.0.1</version>
-        </dependency>
-
-
-    </dependencies>
 
     <build>
         <plugins>
@@ -79,9 +50,4 @@
             </plugin>
         </plugins>
     </build>
-
-    <scm>
-        <developerConnection>Kepa J. Rodriguez</developerConnection>
-        <url>https://github.com/KepaJRodriguez</url>
-    </scm>
 </project>

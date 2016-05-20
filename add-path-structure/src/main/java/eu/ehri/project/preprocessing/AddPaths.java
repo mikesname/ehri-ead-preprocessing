@@ -15,6 +15,9 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static eu.ehri.project.preprocessing.Helpers.isEndElement;
+import static eu.ehri.project.preprocessing.Helpers.isStartElement;
+
 /**
  * Add a path to each node of an EAD tree
  */
@@ -63,256 +66,192 @@ public class AddPaths {
                 writer.add(event);
 
                 if (hasrevdesc) {
-                    if (event.isStartElement()) {
-                        if (event.asStartElement().getName().getLocalPart().equals("revisiondesc")) {
-                            node = "revisiondesc";
-                            writeProvenance(writer, end, eventFactory);
-                        }
+                    if (isStartElement(event, "revisiondesc")) {
+                        node = "revisiondesc";
+                        writeProvenance(writer, end, eventFactory);
                     }
                 } else if (!hasrevdesc && hasProfileDesc) {
-                    if (event.isEndElement()) {
-                        if (event.asEndElement().getName().getLocalPart().equals("profiledesc")) {
-                            writer.add(end);
-                            writer.add(eventFactory.createStartElement("", null, "revisiondesc"));
-                            writeProvenance(writer, end, eventFactory);
-                            writer.add(eventFactory.createEndElement("", null, "revisiondesc"));
-                        }
+                    if (isEndElement(event, "profiledesc")) {
+                        writer.add(end);
+                        writer.add(eventFactory.createStartElement("", null, "revisiondesc"));
+                        writeProvenance(writer, end, eventFactory);
+                        writer.add(eventFactory.createEndElement("", null, "revisiondesc"));
                     }
                 } else if (!hashead && !hasProfileDesc) {
-                    if (event.isEndElement()) {
-                        if (event.asEndElement().getName().getLocalPart().equals("filedesc")) {
-                            writer.add(end);
-                            writer.add(eventFactory.createStartElement("", null, "revisiondesc"));
-                            writeProvenance(writer, end, eventFactory);
-                            writer.add(eventFactory.createEndElement("", null, "revisiondesc"));
-                        }
-                    }
-                }
-
-                if (event.isStartElement()) {
-                    if (event.asStartElement().getName().getLocalPart().equals("archdesc")) {
-                        node = "topnode";
-                        toplevel = true;
-                    }
-                }
-
-                if (event.isEndElement()) {
-                    if (event.asEndElement().getName().getLocalPart().equals("did")) {
-                        toplevel = false;
-                    }
-                }
-                if (event.isStartElement()) {
-
-                    if (event.asStartElement().getName().getLocalPart().equals("c01")) {
-                        cntC01++;
-                        node = "c01";
-                    }
-                }
-                if (event.isStartElement()) {
-                    if (event.asStartElement().getName().getLocalPart().equals("c02")) {
-                        node = "c02";
-                        cntC02++;
-                    }
-                }
-
-                if (event.isStartElement()) {
-                    if (event.asStartElement().getName().getLocalPart().equals("c03")) {
-                        node = "c03";
-                        cntC03++;
-                    }
-                }
-                if (event.isStartElement()) {
-                    if (event.asStartElement().getName().getLocalPart().equals("c04")) {
-                        node = "c04";
-                        cntC04++;
-                    }
-                }
-
-                if (event.isStartElement()) {
-                    if (event.asStartElement().getName().getLocalPart().equals("c05")) {
-                        node = "c05";
-                        cntC05++;
-                    }
-                }
-                if (event.isStartElement()) {
-                    if (event.asStartElement().getName().getLocalPart().equals("c06")) {
-                        node = "c06";
-                        cntC06++;
-                    }
-                }
-                if (event.isStartElement()) {
-                    if (event.asStartElement().getName().getLocalPart().equals("c07")) {
-                        node = "c07";
-                        cntC07++;
-                    }
-                }
-                if (event.isStartElement()) {
-                    if (event.asStartElement().getName().getLocalPart().equals("c08")) {
-                        node = "c08";
-                        cntC08++;
-                    }
-                }
-                if (event.isStartElement()) {
-                    if (event.asStartElement().getName().getLocalPart().equals("c09")) {
-                        node = "c09";
-                        cntC09++;
-                    }
-                }
-                if (event.isStartElement()) {
-                    if (event.asStartElement().getName().getLocalPart().equals("c10")) {
-                        node = "c10";
-                        cntC10++;
-                    }
-                }
-                if (event.isStartElement()) {
-                    if (event.asStartElement().getName().getLocalPart().equals("c11")) {
-                        node = "c11";
-                        cntC11++;
-                    }
-                }
-                if (event.isStartElement()) {
-                    if (event.asStartElement().getName().getLocalPart().equals("c12")) {
-                        node = "c12";
-                        cntC12++;
-                    }
-                }
-
-                if (event.isEndElement()) {
-                    if (event.asEndElement().getName().getLocalPart().equals("head") && toplevel) {
+                    if (isEndElement(event, "filedesc")) {
                         writer.add(end);
-                        writer.add(eventFactory.createStartElement("", null, "unitid"));
-                        writer.add(eventFactory.createAttribute("label", "ehri_structure"));
-                        writer.add(eventFactory.createCharacters(top));
-                        writer.add(eventFactory.createEndElement("", null, "unitid"));
+                        writer.add(eventFactory.createStartElement("", null, "revisiondesc"));
+                        writeProvenance(writer, end, eventFactory);
+                        writer.add(eventFactory.createEndElement("", null, "revisiondesc"));
                     }
                 }
 
-                if (event.isStartElement()) {
-                    if (event.asStartElement().getName().getLocalPart().equals("did")
-                            && toplevel && !hashead) {
-                        writer.add(end);
-                        writer.add(eventFactory.createStartElement("", null, "unitid"));
-                        writer.add(eventFactory.createAttribute("label", "ehri_structure"));
-                        writer.add(eventFactory.createCharacters(top));
-                        writer.add(eventFactory.createEndElement("", null, "unitid"));
-                    }
+                if (isStartElement(event, "archdesc")) {
+                    node = "topnode";
+                    toplevel = true;
                 }
 
-                if (event.isStartElement()) {
-                    if (event.asStartElement().getName().getLocalPart().equals("did")
-                            && !toplevel) {
-
-                        writer.add(end);
-                        writer.add(eventFactory.createStartElement("", null, "unitid"));
-                        writer.add(eventFactory.createAttribute("label", "ehri_structure"));
-                        if (node.equals("c01")) {
-                            writer.add(eventFactory.createCharacters(top + "." + cntC01));
-                        }
-                        if (node.equals("c02")) {
-                            writer.add(eventFactory.createCharacters(top + "." + cntC01 + "." + cntC02));
-                        }
-                        if (node.equals("c03")) {
-                            writer.add(eventFactory.createCharacters(top + "." + cntC01 + "." + cntC02 + "." + cntC03));
-                        }
-                        if (node.equals("c04")) {
-                            writer.add(eventFactory.createCharacters(top + "." + cntC01 + "." + cntC02 + "." + cntC03 + "."
-                                    + cntC04));
-                        }
-                        if (node.equals("c05")) {
-                            writer.add(eventFactory.createCharacters(top + "." + cntC01 + "." + cntC02 + "." + cntC03 + "."
-                                    + cntC04 + "." + cntC05));
-                        }
-                        if (node.equals("c06")) {
-                            writer.add(eventFactory.createCharacters(top + "." + cntC01 + "." + cntC02 + "." + cntC03 + "."
-                                    + cntC04 + "." + cntC05 + "." + cntC06));
-                        }
-                        if (node.equals("c07")) {
-                            writer.add(eventFactory.createCharacters(top + "." + cntC01 + "." + cntC02 + "." + cntC03 + "."
-                                    + cntC04 + "." + cntC05 + "." + cntC06 + "." + cntC07));
-                        }
-                        if (node.equals("c08")) {
-                            writer.add(eventFactory.createCharacters(top + "." + cntC01 + "." + cntC02 + "." + cntC03 + "."
-                                    + cntC04 + "." + cntC05 + "." + cntC06 + "." + cntC07 + "." + cntC08));
-                        }
-                        if (node.equals("c09")) {
-                            writer.add(eventFactory.createCharacters(top + "." + cntC01 + "." + cntC02 + "." + cntC03 + "."
-                                    + cntC04 + "." + cntC05 + "." + cntC06 + "." + cntC07 + "." + cntC08 + "." + cntC09));
-                        }
-                        if (node.equals("c10")) {
-                            writer.add(eventFactory.createCharacters(top + "." + cntC01 + "." + cntC02 + "." + cntC03 + "."
-                                    + cntC04 + "." + cntC05 + "." + cntC06 + "." + cntC07 + "." + cntC08 + "." + cntC09 + "."
-                                    + cntC10));
-                        }
-                        if (node.equals("c11")) {
-                            writer.add(eventFactory.createCharacters(top + "." + cntC01 + "." + cntC02 + "." + cntC03 + "."
-                                    + cntC04 + "." + cntC05 + "." + cntC06 + "." + cntC07 + "." + cntC08 + "." + cntC09 + "."
-                                    + cntC10 + "." + cntC11));
-                        }
-                        if (node.equals("c12")) {
-                            writer.add(eventFactory.createCharacters(top + "." + cntC01 + "." + cntC02 + "." + cntC03 + "."
-                                    + cntC04 + "." + cntC05 + "." + cntC06 + "." + cntC07 + "." + cntC08 + "." + cntC09 + "."
-                                    + cntC10 + "." + cntC11 + "." + cntC12));
-                        }
-                        writer.add(eventFactory
-                                .createEndElement("", null, "unitid"));
-                    }
+                if (isEndElement(event, "did")) {
+                    toplevel = false;
+                }
+                if (isStartElement(event, "c01")) {
+                    cntC01++;
+                    node = "c01";
+                }
+                if (isStartElement(event, "c02")) {
+                    node = "c02";
+                    cntC02++;
                 }
 
-                if (event.isEndElement()) {
-                    if (event.asEndElement().getName().getLocalPart().equals("c01")) {
-                        cntC02 = 0;
+                if (isStartElement(event, "c03")) {
+                    node = "c03";
+                    cntC03++;
+                }
+                if (isStartElement(event, "c04")) {
+                    node = "c04";
+                    cntC04++;
+                }
 
-                    }
+                if (isStartElement(event, "c05")) {
+                    node = "c05";
+                    cntC05++;
                 }
-                if (event.isEndElement()) {
-                    if (event.asEndElement().getName().getLocalPart().equals("c02")) {
-                        cntC03 = 0;
-                    }
+                if (isStartElement(event, "c06")) {
+                    node = "c06";
+                    cntC06++;
                 }
-                if (event.isEndElement()) {
-                    if (event.asEndElement().getName().getLocalPart().equals("c03")) {
-                        cntC04 = 0;
-                    }
+                if (isStartElement(event, "c07")) {
+                    node = "c07";
+                    cntC07++;
                 }
-                if (event.isEndElement()) {
-                    if (event.asEndElement().getName().getLocalPart().equals("c04")) {
-                        cntC05 = 0;
-                    }
+                if (isStartElement(event, "c08")) {
+                    node = "c08";
+                    cntC08++;
                 }
-                if (event.isEndElement()) {
-                    if (event.asEndElement().getName().getLocalPart().equals("c05")) {
-                        cntC06 = 0;
-                    }
+                if (isStartElement(event, "c09")) {
+                    node = "c09";
+                    cntC09++;
                 }
-                if (event.isEndElement()) {
-                    if (event.asEndElement().getName().getLocalPart().equals("c06")) {
-                        cntC07 = 0;
-                    }
+                if (isStartElement(event, "c10")) {
+                    node = "c10";
+                    cntC10++;
                 }
-                if (event.isEndElement()) {
-                    if (event.asEndElement().getName().getLocalPart().equals("c07")) {
-                        cntC08 = 0;
-                    }
+                if (isStartElement(event, "c11")) {
+                    node = "c11";
+                    cntC11++;
                 }
-                if (event.isEndElement()) {
-                    if (event.asEndElement().getName().getLocalPart().equals("c08")) {
-                        cntC09 = 0;
-                    }
+                if (isStartElement(event, "c12")) {
+                    node = "c12";
+                    cntC12++;
                 }
-                if (event.isEndElement()) {
-                    if (event.asEndElement().getName().getLocalPart().equals("c09")) {
-                        cntC10 = 0;
-                    }
+
+                if (isEndElement(event, "head") && toplevel) {
+                    writer.add(end);
+                    writer.add(eventFactory.createStartElement("", null, "unitid"));
+                    writer.add(eventFactory.createAttribute("label", "ehri_structure"));
+                    writer.add(eventFactory.createCharacters(top));
+                    writer.add(eventFactory.createEndElement("", null, "unitid"));
                 }
-                if (event.isEndElement()) {
-                    if (event.asEndElement().getName().getLocalPart().equals("c10")) {
-                        cntC11 = 0;
-                    }
+
+                if (isStartElement(event, "did")
+                        && toplevel && !hashead) {
+                    writer.add(end);
+                    writer.add(eventFactory.createStartElement("", null, "unitid"));
+                    writer.add(eventFactory.createAttribute("label", "ehri_structure"));
+                    writer.add(eventFactory.createCharacters(top));
+                    writer.add(eventFactory.createEndElement("", null, "unitid"));
                 }
-                if (event.isEndElement()) {
-                    if (event.asEndElement().getName().getLocalPart().equals("c11")) {
-                        cntC12 = 0;
+
+                if (isStartElement(event, "did")
+                        && !toplevel) {
+
+                    writer.add(end);
+                    writer.add(eventFactory.createStartElement("", null, "unitid"));
+                    writer.add(eventFactory.createAttribute("label", "ehri_structure"));
+                    if (node.equals("c01")) {
+                        writer.add(eventFactory.createCharacters(top + "." + cntC01));
                     }
+                    if (node.equals("c02")) {
+                        writer.add(eventFactory.createCharacters(top + "." + cntC01 + "." + cntC02));
+                    }
+                    if (node.equals("c03")) {
+                        writer.add(eventFactory.createCharacters(top + "." + cntC01 + "." + cntC02 + "." + cntC03));
+                    }
+                    if (node.equals("c04")) {
+                        writer.add(eventFactory.createCharacters(top + "." + cntC01 + "." + cntC02 + "." + cntC03 + "."
+                                + cntC04));
+                    }
+                    if (node.equals("c05")) {
+                        writer.add(eventFactory.createCharacters(top + "." + cntC01 + "." + cntC02 + "." + cntC03 + "."
+                                + cntC04 + "." + cntC05));
+                    }
+                    if (node.equals("c06")) {
+                        writer.add(eventFactory.createCharacters(top + "." + cntC01 + "." + cntC02 + "." + cntC03 + "."
+                                + cntC04 + "." + cntC05 + "." + cntC06));
+                    }
+                    if (node.equals("c07")) {
+                        writer.add(eventFactory.createCharacters(top + "." + cntC01 + "." + cntC02 + "." + cntC03 + "."
+                                + cntC04 + "." + cntC05 + "." + cntC06 + "." + cntC07));
+                    }
+                    if (node.equals("c08")) {
+                        writer.add(eventFactory.createCharacters(top + "." + cntC01 + "." + cntC02 + "." + cntC03 + "."
+                                + cntC04 + "." + cntC05 + "." + cntC06 + "." + cntC07 + "." + cntC08));
+                    }
+                    if (node.equals("c09")) {
+                        writer.add(eventFactory.createCharacters(top + "." + cntC01 + "." + cntC02 + "." + cntC03 + "."
+                                + cntC04 + "." + cntC05 + "." + cntC06 + "." + cntC07 + "." + cntC08 + "." + cntC09));
+                    }
+                    if (node.equals("c10")) {
+                        writer.add(eventFactory.createCharacters(top + "." + cntC01 + "." + cntC02 + "." + cntC03 + "."
+                                + cntC04 + "." + cntC05 + "." + cntC06 + "." + cntC07 + "." + cntC08 + "." + cntC09 + "."
+                                + cntC10));
+                    }
+                    if (node.equals("c11")) {
+                        writer.add(eventFactory.createCharacters(top + "." + cntC01 + "." + cntC02 + "." + cntC03 + "."
+                                + cntC04 + "." + cntC05 + "." + cntC06 + "." + cntC07 + "." + cntC08 + "." + cntC09 + "."
+                                + cntC10 + "." + cntC11));
+                    }
+                    if (node.equals("c12")) {
+                        writer.add(eventFactory.createCharacters(top + "." + cntC01 + "." + cntC02 + "." + cntC03 + "."
+                                + cntC04 + "." + cntC05 + "." + cntC06 + "." + cntC07 + "." + cntC08 + "." + cntC09 + "."
+                                + cntC10 + "." + cntC11 + "." + cntC12));
+                    }
+                    writer.add(eventFactory
+                            .createEndElement("", null, "unitid"));
+                }
+
+                if (isEndElement(event, "c01")) {
+                    cntC02 = 0;
+                }
+                if (isEndElement(event, "c02")) {
+                    cntC03 = 0;
+                }
+                if (isEndElement(event, "c03")) {
+                    cntC04 = 0;
+                }
+                if (isEndElement(event, "c04")) {
+                    cntC05 = 0;
+                }
+                if (isEndElement(event, "c05")) {
+                    cntC06 = 0;
+                }
+                if (isEndElement(event, "c06")) {
+                    cntC07 = 0;
+                }
+                if (isEndElement(event, "c07")) {
+                    cntC08 = 0;
+                }
+                if (isEndElement(event, "c08")) {
+                    cntC09 = 0;
+                }
+                if (isEndElement(event, "c09")) {
+                    cntC10 = 0;
+                }
+                if (isEndElement(event, "c10")) {
+                    cntC11 = 0;
+                }
+                if (isEndElement(event, "c11")) {
+                    cntC12 = 0;
                 }
             }
             writer.close();
