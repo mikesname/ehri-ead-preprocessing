@@ -101,7 +101,7 @@ public class UseUNITID_Tag {
                             Attribute attribute = attributes.next();
                             //for unitidAttribute && unitidAttributeValue given
                             if (attribute.getName().toString().equals(unitidAttribute)) {
-                                String type = attribute.getValue().toString();
+                                String type = attribute.getValue();
                                 if (event instanceof Characters) {
                                     if (type.equals(unitidAttributeValue)) {
                                         value = event.asCharacters().toString();
@@ -115,7 +115,8 @@ public class UseUNITID_Tag {
                         boolean isEhriCreatedIdentifier = false;
                         while (attributes.hasNext()) {
                             Attribute attribute = attributes.next();
-                            if (attribute.getName().toString().equals("label") && attribute.getValue().toString().startsWith("ehri_")) {
+                            if (attribute.getName().toString().equals("label")
+                                    && attribute.getValue().startsWith("ehri_")) {
                                 isEhriCreatedIdentifier = true;
                             }
                         }

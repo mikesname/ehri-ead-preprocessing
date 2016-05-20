@@ -25,6 +25,9 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import static eu.ehri.project.preprocessing.Helpers.isEndElement;
+import static eu.ehri.project.preprocessing.Helpers.isStartElement;
+
 public class ExactlyOneMainIdentifier {
 
     public final static String SUFFIX = "_oneid.xml";
@@ -32,7 +35,7 @@ public class ExactlyOneMainIdentifier {
             MAINID = "ehri_main_identifier",
             INTERNALID = "ehri_internal_id",
             MULTIPLEMAINID = "ehri_multiple_identifier";
-    static List<String> mainIdentifiers = new ArrayList<String>();
+    static List<String> mainIdentifiers = new ArrayList<>();
     static String internalIdentifier = null;
     static XMLEventFactory eventFactory = XMLEventFactory.newInstance();
     static XMLOutputFactory factory = XMLOutputFactory.newInstance();
@@ -75,13 +78,13 @@ public class ExactlyOneMainIdentifier {
             if (event.isStartElement()) {
                 //if this is the unitid, we cannot simple copy it, but must rebuild it to overwrite the existing label
                 if (event.asStartElement().getName().getLocalPart().equals("unitid")) {
-                    Iterator<Attribute> attributes = event.asStartElement().getAttributes();
+                    Iterator attributes = event.asStartElement().getAttributes();
 
                     //if label="ehri_main_identifier", write to unitids, else write to 'normal' writer
                     XMLEventWriter unitWriter = writer;
                     while (attributes.hasNext()) {
-                        Attribute attribute = attributes.next();
-                        String type = attribute.getValue().toString();
+                        Attribute attribute = (Attribute) attributes.next();
+                        String type = attribute.getValue();
                         if (attribute.getName().toString().equals(LABEL) && type.equals(MAINID)) {
                             unitWriter = unitids;
                         }
@@ -91,8 +94,8 @@ public class ExactlyOneMainIdentifier {
                     unitWriter.add(eventFactory.createStartElement("", null, "unitid"));
                     event = xmlEventReaderEAD.nextEvent();
                     while (attributes.hasNext()) {
-                        Attribute attribute = attributes.next();
-                        String type = attribute.getValue().toString(); //value of the attribute
+                        Attribute attribute = (Attribute) attributes.next();
+                        String type = attribute.getValue(); //value of the attribute
                         if (attribute.getName().toString().equals(LABEL)) {
                             if (event instanceof Characters) {
                                 if (type.equals(MAINID)) {
@@ -109,7 +112,8 @@ public class ExactlyOneMainIdentifier {
                             }
                         } else {
                             //not a LABEL
-                            unitWriter.add(eventFactory.createAttribute(attribute.getName().toString(), attribute.getValue().toString()));
+                            unitWriter.add(eventFactory.createAttribute(attribute.getName().toString(),
+                                    attribute.getValue()));
                         }
                     }
                     if (event instanceof Characters) {
@@ -155,7 +159,7 @@ public class ExactlyOneMainIdentifier {
                     }
                 }
                 //only add the unitid at this point if the value has been set, and not yet been processed:
-            } else if (event.isEndElement() && event.asEndElement().getName().getLocalPart().equals("did")) {
+            } else if (isEndElement(event, "did")) {
                 writer.add(end);
                 if (mainIdentifiers.size() > 1) {
                     unitids.add(eventFactory.createEndElement("", null, "ids"));
@@ -165,13 +169,10 @@ public class ExactlyOneMainIdentifier {
                     XMLEventReader unitReader = XMLInputFactory.newInstance().createXMLEventReader(IOUtils.toInputStream(unitid.toString(), "UTF-8"));
                     while (unitReader.hasNext()) {
                         XMLEvent unitEvent = unitReader.nextEvent();
-                        if (unitEvent.isStartDocument() || unitEvent.isEndDocument()) {
-                            ; // do nothing
-                        } else if (unitEvent.isStartElement() && unitEvent.asStartElement().getName().getLocalPart().equals("ids")) {
-                            ; //do nothing
-                        } else if (unitEvent.isEndElement() && unitEvent.asEndElement().getName().getLocalPart().equals("ids")) {
-                            ; //do nothing
-                        } else {
+                        if (!(unitEvent.isStartDocument()
+                                || unitEvent.isEndDocument()
+                                || isStartElement(unitEvent, "ids")
+                                || isEndElement(unitEvent, "ids"))) {
                             writer.add(unitEvent);
                         }
                     }
@@ -190,7 +191,6 @@ public class ExactlyOneMainIdentifier {
                 writer.add(end);
                 writer.add(event); //close the did
                 resetMainIdValues();
-
             } else {
                 writer.add(event);
             }

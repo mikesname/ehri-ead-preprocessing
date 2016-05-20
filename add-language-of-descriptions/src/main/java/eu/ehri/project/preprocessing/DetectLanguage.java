@@ -23,13 +23,10 @@ public class DetectLanguage {
         XMLEventReader xmlEventReaderEAD = XMLInputFactory.newInstance()
                 .createXMLEventReader(fileInputStreamEAD);
 
-        XMLEvent end = eventFactory.createDTD("\n");
-
-        String value = "";
+        eventFactory.createDTD("\n");
 
         boolean inLangUsage = false;
         boolean languageAlreadyAvailable = false;
-        boolean langusageFound = false;
 
         while (xmlEventReaderEAD.hasNext()) {
             XMLEvent event = xmlEventReaderEAD.nextEvent();
@@ -47,18 +44,15 @@ public class DetectLanguage {
                 }
                 if (event.asStartElement().getName().getLocalPart()
                         .equals("language") && inLangUsage) {
-                    Iterator<Attribute> attributes = event.asStartElement().getAttributes();
+                    Iterator attributes = event.asStartElement().getAttributes();
                     while (attributes.hasNext()) {
-                        Attribute attribute = attributes.next();
+                        Attribute attribute = (Attribute) attributes.next();
                         if (attribute.getName().toString().equals("langcode")) {
                             languageAlreadyAvailable = true;
                         }
                     }
-
                 }
             }
-
-
         }
         return languageAlreadyAvailable;
     }

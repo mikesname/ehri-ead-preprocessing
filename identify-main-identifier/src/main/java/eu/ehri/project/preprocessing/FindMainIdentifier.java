@@ -28,35 +28,39 @@ public class FindMainIdentifier {
      * @throws IOException
      */
     public static void main(String[] args) throws XMLStreamException, FactoryConfigurationError, IOException {
-        String eadfile = args[0];
+        String eadFile = args[0];
 
         String identifier;
         String attrName = null;
         String attrValue = null;
 
         if (args.length >= 2) {
-            if (args[1].equals(DID)) {
-                identifier = DID;
-            } else if (args[1].equals(UNITID)) {
-                if (args.length == 4) {
-                    attrName = args[2];
-                    attrValue = args[3];
-                }
-                identifier = UNITID;
-            } else {
-                System.out.format("unknown identifier-location given, expected %s or %s, was: %s", DID, UNITID, args[1]);
-                identifier = DetectIdentifier.detectIdentifier(eadfile);
+            switch (args[1]) {
+                case DID:
+                    identifier = DID;
+                    break;
+                case UNITID:
+                    if (args.length == 4) {
+                        attrName = args[2];
+                        attrValue = args[3];
+                    }
+                    identifier = UNITID;
+                    break;
+                default:
+                    System.out.format("unknown identifier-location given, expected %s or %s, was: %s", DID, UNITID, args[1]);
+                    identifier = DetectIdentifier.detectIdentifier(eadFile);
+                    break;
             }
         } else {
-            identifier = DetectIdentifier.detectIdentifier(eadfile);
+            identifier = DetectIdentifier.detectIdentifier(eadFile);
         }
-        System.out.printf("Identifier is %s (%s)\n", identifier, eadfile);
-        String outputfile = eadfile.replace(".xml", "_mainids.xml");
+        System.out.printf("Identifier is %s (%s)\n", identifier, eadFile);
+        String outputFile = eadFile.replace(".xml", "_mainids.xml");
 
         if (identifier.equals(DID)) {
-            UseDID_ID_Label.use_did_label(eadfile);
+            UseDID_ID_Label.use_did_label(eadFile);
         } else if (identifier.equals(UNITID)) {
-            UseUNITID_Tag.use_unitid_tag(eadfile, attrName, attrValue, new FileWriter(outputfile));
+            UseUNITID_Tag.use_unitid_tag(eadFile, attrName, attrValue, new FileWriter(outputFile));
         }
     }
 }

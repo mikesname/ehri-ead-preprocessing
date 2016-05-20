@@ -41,9 +41,9 @@ public class AddPaths {
 
             XMLEvent end = eventFactory.createDTD("\n");
 
-            boolean hasrevdesc = LookForRevisiondesc.hasRevisiondesc(eadfile);
-            boolean hashead = LookForHeadTag.hasHeadTag(eadfile);
-            boolean hasProfileDesc = LookForTag.hasTag(eadfile, "profiledesc");
+            boolean hasRevDesc = TagFinder.hasTag(eadfile, "revisiondesc");
+            boolean hasHead = TagFinder.hasTag(eadfile, "head");
+            boolean hasProfileDesc = TagFinder.hasTag(eadfile, "profiledesc");
 
             String node = "";
             String top = "0";
@@ -65,19 +65,19 @@ public class AddPaths {
                 XMLEvent event = reader.nextEvent();
                 writer.add(event);
 
-                if (hasrevdesc) {
+                if (hasRevDesc) {
                     if (isStartElement(event, "revisiondesc")) {
                         node = "revisiondesc";
                         writeProvenance(writer, end, eventFactory);
                     }
-                } else if (!hasrevdesc && hasProfileDesc) {
+                } else if (!hasRevDesc && hasProfileDesc) {
                     if (isEndElement(event, "profiledesc")) {
                         writer.add(end);
                         writer.add(eventFactory.createStartElement("", null, "revisiondesc"));
                         writeProvenance(writer, end, eventFactory);
                         writer.add(eventFactory.createEndElement("", null, "revisiondesc"));
                     }
-                } else if (!hashead && !hasProfileDesc) {
+                } else if (!hasHead && !hasProfileDesc) {
                     if (isEndElement(event, "filedesc")) {
                         writer.add(end);
                         writer.add(eventFactory.createStartElement("", null, "revisiondesc"));
@@ -153,8 +153,7 @@ public class AddPaths {
                     writer.add(eventFactory.createEndElement("", null, "unitid"));
                 }
 
-                if (isStartElement(event, "did")
-                        && toplevel && !hashead) {
+                if (isStartElement(event, "did") && toplevel && !hasHead) {
                     writer.add(end);
                     writer.add(eventFactory.createStartElement("", null, "unitid"));
                     writer.add(eventFactory.createAttribute("label", "ehri_structure"));
@@ -162,8 +161,7 @@ public class AddPaths {
                     writer.add(eventFactory.createEndElement("", null, "unitid"));
                 }
 
-                if (isStartElement(event, "did")
-                        && !toplevel) {
+                if (isStartElement(event, "did") && !toplevel) {
 
                     writer.add(end);
                     writer.add(eventFactory.createStartElement("", null, "unitid"));
